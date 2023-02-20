@@ -1,6 +1,6 @@
 /*****************************************************************************
 
-      dsp_util.hpp
+      Fold.hpp
       Copyright (c) 2023 Raphael DINGE
 
 *Tab=3***********************************************************************/
@@ -20,67 +20,69 @@ namespace erb
 
 
 
+/*\\\ PUBLIC \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
 /*
 ==============================================================================
-Name: scale
+Name: ctor
 ==============================================================================
 */
 
-float scale (float x_norm, float min, float max)
+Fold::Fold ()
 {
-   return min + x_norm * (max - min);
+   _impl.Init ();
+}
+
+
+/*
+==============================================================================
+Name: operator ()
+==============================================================================
+*/
+
+float Fold::operator () (float x)
+{
+   return _impl.Process (x);
 }
 
 
 
 /*
 ==============================================================================
-Name: scale
+Name: operator ()
 ==============================================================================
 */
 
-template <typename T>
-typename std::enable_if <
-is_unit_type <T>::value, T
->::type  scale (float x_norm, T min, T max)
+template <size_t size>
+std::array <float, size>   Fold::operator () (std::array <float, size> in)
 {
-   return {min.value + x_norm * (max.value - min.value)};
+   std::array <float, size> ret;
+   for (size_t i = 0 ; i < size ; ++i)
+   {
+      ret [i] = _impl.Process (in [i]);
+   }
+
+   return ret;
 }
 
 
+
+/*\\\ INTERNAL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 /*
 ==============================================================================
-Name: scale
+Name: impl_set_increment
 ==============================================================================
 */
 
-float scale (float x_norm, float min, float max, float skew)
+void  Fold::impl_set_increment (float increment)
 {
-   if (x_norm == 0.f) return min;
-
-   float x = std::exp (std::log (x_norm) / skew);
-   return min + x * (max - min);
+   _impl.SetIncrement (increment);
 }
 
 
 
-/*
-==============================================================================
-Name: scale
-==============================================================================
-*/
-
-template <typename T>
-typename std::enable_if <
-is_unit_type <T>::value, T
->::type  scale (float x_norm, T min, T max, float skew)
-{
-   if (x_norm == 0.f) return min;
-
-   float x = std::exp (std::log (x_norm) / skew);
-   return {min.value + x * (max.value - min.value)};
-}
+/*\\\ PRIVATE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 
 

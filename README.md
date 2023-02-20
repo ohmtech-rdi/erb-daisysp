@@ -10,7 +10,67 @@ As with `eurorack-blocks`, testing and debugging can be done in a [virtual Euror
 
 This repository is part of the [`eurorack-blocks` documentation](https://eurorack-blocks.readthedocs.io/en/latest/).
 
-One can also use the original `DaisySP` classes directly.
+```cpp
+// SimpleOscillator.h
+
+#include "artifacts/SimpleOscillatorUi.h"
+
+#include "erb/erb.h"
+#include "erb/daisysp.h"
+
+using namespace erb::literals;
+
+struct SimpleOscillator
+{
+   SimpleOscillatorUi ui;
+
+   erb::Oscillator oscillator;
+   erb::Tone tone;
+
+   void  init () {
+      oscillator.amplitude = -3_dB;
+      oscillator.waveform = erb::Oscillator::Waveform::PolyBlepSquare;
+   }
+
+   void  process () {
+      oscillator.frequency = erb::scale (ui.frequency, 80_Hz, 10_kHz, 0.25f /* skew */);
+      tone.cutoff = erb::scale (ui.cutoff, 30_Hz, 20_kHz, 0.25f /* skew */);
+
+      ui.audio_out = tone (oscillator ());
+   }
+};
+```
+
+<img align="right" width="30%" src="./samples/simple-oscillator/screenshot.png">
+
+```erbui
+// SimpleOscillator.erbui
+
+module SimpleOscillator {
+   width 12hp
+   board kivu12
+   material aluminum
+
+   header { label "Oscillator" }
+
+   control frequency Pot {
+      position 6hp, 30mm
+      label "OSC FREQ"
+   }
+
+   control cutoff Pot {
+      position 6hp, 60mm
+      label "CUTOFF"
+   }
+
+   control audio_out AudioOut {
+      position 6hp, 111mm
+      label "OUT"
+   }
+}
+```
+
+Alternatively, you can also use the original `DaisySP` classes directly.
 
 ```cpp
 // SimpleOscillator.h
@@ -59,7 +119,9 @@ struct SimpleOscillator
 ## Sample Projects
 
 - [`simple-oscillator-no-wrapper`](./samples/simple-oscillator-no-wrapper/)
-   is an example without using the Eurorack-blocks wrapper.
+   is an example without using the Eurorack-blocks wrapper,
+- [`simple-oscillator`](./samples/simple-oscillator/)
+   is an example using the Eurorack-blocks wrapper.
 
 
 ## Setting up

@@ -1,0 +1,24 @@
+// SimpleOscillator.erbui
+
+module SimpleOscillator {
+   width 12hp
+   board kivu12
+   material aluminum
+
+   header { label "Oscillator" }
+
+   control frequency Pot {
+      position 6hp, 30mm
+      label "OSC FREQ"
+   }
+
+   control cutoff Pot {
+      position 6hp, 60mm
+      label "CUTOFF"
+   }
+
+   control audio_out AudioOut {
+      position 6hp, 111mm
+      label "OUT"
+   }
+}

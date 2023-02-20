@@ -1,0 +1,10 @@
+// SimpleOscillator.erbb
+
+module SimpleOscillator {
+   import "../../daisysp.erbb"
+
+   sources {
+      file "SimpleOscillator.h"
+      file "SimpleOscillator.erbui"
+   }
+}
